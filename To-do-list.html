@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List Application</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color:bisque;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid black;
+            border-radius: 5px;
+            background-color: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        #task-input {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        #task-input input[type="text"] {
+            width: 60%;
+            padding: 8px;
+            margin-right: 10px;
+            border-radius: 5px;
+            border: 1px solid black;
+            outline: none;
+        }
+
+        #task-input select, #task-input button {
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid black;
+            cursor: pointer;
+            background-color: greenyellow;
+            color: white;
+        }
+
+        #task-input button:hover {
+            background-color: greenyellow;
+        }
+
+        .task-item {
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: white;
+            transition: all 0.3s ease;
+        }
+
+        .task-item.completed {
+            text-decoration: line-through;
+            background-color: white;
+        }
+
+        .task-item:hover {
+            box-shadow: 0 5px 8px rgba(0, 0, 0, 0.1);
+
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>To-Do App</h1> 
+
+        <div id="task-input">
+            <input type="text" id="task-name" placeholder="Enter task">
+            <select id="priority">
+                <option value="high">High Priority</option>
+                <option value="medium">Medium Priority</option>
+                <option value="low">Low Priority</option>
+            </select>
+            <button id="add-task">Add Task</button>
+        </div>
+        <div id="task-list"></div>
+
+        <div id="task-filter">
+            <label>Filter by:</label>
+            <select id="filter-options">
+                <option value="all">All Tasks</option>
+                <option value="completed">Completed Tasks</option>
+                <option value="pending">Pending Tasks</option>
+            </select>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const taskInput = document.getElementById('task-name');
+            const priorityInput = document.getElementById('priority');
+            const addTaskButton = document.getElementById('add-task');
+            const taskList = document.getElementById('task-list');
+            const filterOptions = document.getElementById('filter-options');
+
+            addTaskButton.addEventListener('click', function () {
+                const taskName = taskInput.value.trim();
+                const priority = priorityInput.value;
+
+                if (taskName !== '') {
+                    addTask(taskName, priority);
+                    taskInput.value = '';
+                }
+            });
+
+            function addTask(taskName, priority) {
+                const taskItem = document.createElement('div');
+                taskItem.classList.add('task-item');
+                taskItem.innerHTML = `
+                    <input type="checkbox">
+                    <span>${taskName}</span>
+                    <span class="priority">${priority}</span>
+                    <button class="delete">Delete</button>
+                `;
+                taskList.appendChild(taskItem);
+
+                taskItem.querySelector('.delete').addEventListener('click', function () {
+                    taskItem.remove();
+                });
+
+                taskItem.querySelector('input[type="checkbox"]').addEventListener('change', function () {
+                    if (this.checked) {
+                        taskItem.classList.add('completed');
+                    } else {
+                        taskItem.classList.remove('completed');
+                    }
+                });
+            }
+
+            filterOptions.addEventListener('change', function () {
+                const filterValue = filterOptions.value;
+                const taskItems = document.querySelectorAll('.task-item');
+
+                taskItems.forEach(function (taskItem) {
+                    if (filterValue === 'completed' && !taskItem.classList.contains('completed')) {
+                        taskItem.style.display = 'none';
+                    } else if (filterValue === 'pending' && taskItem.classList.contains('completed')) {
+                        taskItem.style.display = 'none';
+                    } else {
+                        taskItem.style.display = 'block';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
